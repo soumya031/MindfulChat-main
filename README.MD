@@ -54,7 +54,7 @@ mental_health_chatbot/
 
 ### 1. Clone & Install Dependencies
 ```bash
-git clone https://github.com/YOUR_USERNAME/mental_health_chatbot.git
+git clone https://github.com/soumya031/MindfulChat-main
 cd mental_health_chatbot
 npm install
 ```
