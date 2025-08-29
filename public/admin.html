@@ -1,0 +1,216 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>SoumyaGPT Admin Panel</title>
+  <link rel="stylesheet" href="styles.css">
+  <link rel="stylesheet" href="admin.css">
+  <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.4.0/css/all.min.css">
+</head>
+<body>
+  <div class="admin-container">
+    <header class="admin-header">
+      <div class="logo">
+        <i class="fa-solid fa-brain"></i>
+        <h1>SoumyaGPT Admin</h1>
+      </div>
+      <div class="admin-user">
+        <span id="adminUsername">Admin</span>
+        <button id="logoutBtn" class="btn secondary-btn">Logout</button>
+      </div>
+    </header>
+
+    <div class="admin-content">
+      <aside class="admin-sidebar">
+        <nav>
+          <ul>
+            <li><a href="#dashboard" class="active" data-section="dashboard">Dashboard</a></li>
+            <li><a href="#users" data-section="users">Users</a></li>
+            <li><a href="#chats" data-section="chats">Chat Logs</a></li>
+          </ul>
+        </nav>
+      </aside>
+
+      <main class="admin-main">
+        <!-- Dashboard Section -->
+        <section id="dashboard" class="admin-section active">
+          <h2>Dashboard</h2>
+          <div class="stats-cards">
+            <div class="stat-card">
+              <h3>Total Users</h3>
+              <p id="totalUsers">Loading...</p>
+            </div>
+            <div class="stat-card">
+              <h3>Total Chats</h3>
+              <p id="totalChats">Loading...</p>
+            </div>
+            <div class="stat-card">
+              <h3>New Users (7 days)</h3>
+              <p id="newUsers">Loading...</p>
+            </div>
+            <div class="stat-card">
+              <h3>New Chats (7 days)</h3>
+              <p id="newChats">Loading...</p>
+            </div>
+          </div>
+        </section>
+
+        <!-- Users Section -->
+        <section id="users" class="admin-section">
+          <h2>User Management</h2>
+          <div class="admin-actions">
+            <input type="text" id="userSearchInput" placeholder="Search users...">
+            <button id="refreshUsersBtn" class="btn primary-btn">
+              <i class="fa-solid fa-refresh"></i> Refresh
+            </button>
+          </div>
+          <div class="table-container">
+            <table id="usersTable">
+              <thead>
+                <tr>
+                  <th>Username</th>
+                  <th>Email</th>
+                  <th>Created</th>
+                  <th>Admin</th>
+                  <th>Actions</th>
+                </tr>
+              </thead>
+              <tbody id="usersTableBody">
+                <tr>
+                  <td colspan="5" class="loading-row">Loading users...</td>
+                </tr>
+              </tbody>
+            </table>
+          </div>
+        </section>
+
+        <!-- Chats Section -->
+        <section id="chats" class="admin-section">
+          <h2>Chat Logs</h2>
+          <div class="admin-actions">
+            <input type="text" id="chatSearchInput" placeholder="Search chats...">
+            <button id="refreshChatsBtn" class="btn primary-btn">
+              <i class="fa-solid fa-refresh"></i> Refresh
+            </button>
+          </div>
+          <div class="table-container">
+            <table id="chatsTable">
+              <thead>
+                <tr>
+                  <th>User</th>
+                  <th>Date</th>
+                  <th>First Message</th>
+                  <th>Flagged</th>
+                  <th>Actions</th>
+                </tr>
+              </thead>
+              <tbody id="chatsTableBody">
+                <tr>
+                  <td colspan="5" class="loading-row">Loading chats...</td>
+                </tr>
+              </tbody>
+            </table>
+          </div>
+          <div class="pagination" id="chatsPagination">
+            <button id="prevPageBtn" class="pagination-btn">Previous</button>
+            <span id="paginationInfo">Page 1 of 1</span>
+            <button id="nextPageBtn" class="pagination-btn">Next</button>
+          </div>
+        </section>
+      </main>
+    </div>
+  </div>
+
+  <!-- Modal for User Edit -->
+  <div id="userEditModal" class="modal hidden">
+    <div class="modal-content">
+      <button class="close-btn" id="closeUserModalBtn"><i class="fa-solid fa-times"></i></button>
+      <h2 id="userModalTitle">Edit User</h2>
+      <form id="userEditForm">
+        <input type="hidden" id="editUserId">
+        <div class="form-group">
+          <label for="editUsername">Username</label>
+          <input type="text" id="editUsername" required>
+        </div>
+        <div class="form-group">
+          <label for="editEmail">Email</label>
+          <input type="email" id="editEmail" required>
+        </div>
+        <div class="form-group checkbox-group">
+          <label for="editIsAdmin">
+            <input type="checkbox" id="editIsAdmin">
+            Administrator
+          </label>
+        </div>
+        <button type="submit" class="btn primary-btn">Save Changes</button>
+      </form>
+    </div>
+  </div>
+
+  <!-- Modal for Chat Details -->
+  <div id="chatDetailModal" class="modal hidden">
+    <div class="modal-content">
+      <button class="close-btn" id="closeChatModalBtn"><i class="fa-solid fa-times"></i></button>
+      <h2>Chat Details</h2>
+      <div id="chatDetailContent">
+        <div class="chat-user-info">
+          <p><strong>User:</strong> <span id="chatDetailUsername">loading...</span></p>
+          <p><strong>Date:</strong> <span id="chatDetailDate">loading...</span></p>
+        </div>
+        <div class="chat-messages-container">
+          <div class="chat-message user-message">
+            <div class="message-header">User Message:</div>
+            <div id="chatDetailUserMessage" class="message-content">loading...</div>
+          </div>
+          <div class="chat-message bot-message">
+            <div class="message-header">Bot Response:</div>
+            <div id="chatDetailBotResponse" class="message-content">loading...</div>
+          </div>
+        </div>
+        <div class="chat-actions">
+          <div class="form-row" style="display: flex; gap: 16px; align-items: flex-end;">
+            <div class="form-group" style="flex: 1;">
+              <label for="chatDetailSentiment">Sentiment</label>
+              <input id="chatDetailSentiment" class="form-control" type="text" readonly />
+            </div>
+            <div class="form-group" style="flex: 1;">
+              <label for="chatDetailConfidence">Confidence</label>
+              <input id="chatDetailConfidence" class="form-control" type="text" readonly />
+            </div>
+          </div>
+          <div class="form-group checkbox-group">
+            <label for="chatDetailFlag">Flag:</label>
+            <select id="chatDetailFlag" class="form-control">
+              <option value="">None</option>
+              <option value="anxiety">Anxiety</option>
+              <option value="depression">Depression</option>
+              <option value="neutral">Neutral</option>
+              <option value="stress">Stress</option>
+              <option value="suicidal">Suicidal</option>
+            </select>
+          </div>
+          <button id="saveChatDetailsBtn" class="btn primary-btn">Save Changes</button>
+        </div>
+      </div>
+    </div>
+  </div>
+
+  <!-- Confirmation Modal -->
+  <div id="confirmModal" class="modal hidden">
+    <div class="modal-content">
+      <h2>Confirm Action</h2>
+      <p id="confirmMessage">Are you sure you want to proceed?</p>
+      <div class="modal-actions">
+        <button id="confirmCancelBtn" class="btn secondary-btn">Cancel</button>
+        <button id="confirmActionBtn" class="btn danger-btn">Confirm</button>
+      </div>
+    </div>
+  </div>
+
+  <!-- Notification System -->
+  <div id="notification" class="notification hidden"></div>
+
+  <script src="admin.js"></script>
+</body>
+</html>
