@@ -1,4 +1,4 @@
-# MindfulChat: Mental Health Chatbot 
+# MindChat: Mental Health Chatbot 
 
 An intelligent, full-stack mental health support chatbot combining BERT-based sentiment analysis (Python) and Google Gemini AI for empathetic, context-aware responses.
 
@@ -152,3 +152,5 @@ The chatbot includes an automated crisis detection system that:
 1. Identifies potential crisis situations
 2. Provides immediate helpline information
 3. Encourages professional help when needed
+
+## Built with ❤️ by SoumyaAI Technologies / Soumyadip 
